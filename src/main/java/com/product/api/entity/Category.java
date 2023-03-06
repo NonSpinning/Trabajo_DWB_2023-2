@@ -24,7 +24,7 @@ public class Category implements Comparable<Category>{
     private String category;
     
     @NotNull
-    @Column(name = "acroynym")
+    @Column(name = "acronym")
     private String acronym;
 
     @Column(name = "status")
@@ -32,6 +32,8 @@ public class Category implements Comparable<Category>{
     @Max(value = 1, message="status must be 0 or 1")
     @JsonIgnore
     private Integer status;
+
+    public Category(){}
 
     public Category(Integer category_id, String category, String acronym, Integer status){
         this.category_id = category_id;
