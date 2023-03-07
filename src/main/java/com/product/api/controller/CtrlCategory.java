@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.product.api.dto.ApiResponse;
 import com.product.api.entity.Category;
 import com.product.api.service.SvcCategory;
+import com.product.exception.ApiException;
 
 @RestController
 @RequestMapping("/category")
@@ -32,52 +34,26 @@ public class CtrlCategory{
     }
 
     @GetMapping("/{category_id}")
-    public ResponseEntity<?> getCategory(@PathVariable int category_id){
-        Category ret = svc.getCategory(category_id);
-        if (ret == null){
-            return new ResponseEntity<String>("category does not exist", HttpStatus.BAD_REQUEST);
-        }else{
-            return new ResponseEntity<Category>(ret, HttpStatus.OK);
-        }
+    public ResponseEntity<Category> getCategory(@PathVariable int category_id){
+        return new ResponseEntity<>(svc.getCategory(category_id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category, BindingResult bindingResult){
-        String message;
-        if(bindingResult.hasErrors()){
-            message = bindingResult.getAllErrors().get(0).getDefaultMessage();
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-        }
-        String ret = svc.createCategory(category);
-        if (ret.equals("category created")){
-            return new ResponseEntity<>(ret, HttpStatus.CREATED);
-        }
-        if (ret.equals("category has been activated")){
-            return new ResponseEntity<>(ret, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(ret, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody Category category, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) throw new ApiException(HttpStatus.BAD_REQUEST, bindingResult.getAllErrors().get(0).getDefaultMessage());
+        ApiResponse ret = svc.createCategory(category);
+        if (ret.getMessage().equals("category created")) return new ResponseEntity<ApiResponse>(ret, HttpStatus.CREATED);
+        return new ResponseEntity<>(svc.createCategory(category), HttpStatus.OK);
     }
 
     @PutMapping("/{category_id}")
-    public ResponseEntity<String> updateCategory(@PathVariable int category_id, @Valid @RequestBody Category category, BindingResult bindingResult){
-        String message = "";
-        if(bindingResult.hasErrors()){
-            message = bindingResult.getAllErrors().get(0).getDefaultMessage();
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-        }
-        String ret = svc.updateCategory(category_id, category);
-        if (ret == "category updated"){
-            return new ResponseEntity<>(ret, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(ret, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> updateCategory(@PathVariable int category_id, @Valid @RequestBody Category category, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) throw new ApiException(HttpStatus.BAD_REQUEST, bindingResult.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(svc.updateCategory(category_id, category), HttpStatus.OK);
     }
 
     @DeleteMapping("/{category_id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable int category_id){
-        String ret = svc.deleteCategory(category_id);
-        if (ret.equals("category does not exist")){
-            return new ResponseEntity<>(ret, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(ret, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable int category_id){
+        return new ResponseEntity<>(svc.deleteCategory(category_id), HttpStatus.OK);
     }
 } 
