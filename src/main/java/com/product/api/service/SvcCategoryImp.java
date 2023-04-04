@@ -53,7 +53,7 @@ public class SvcCategoryImp implements SvcCategory{
                     throw new ApiException(HttpStatus.BAD_REQUEST, "attributes are mismatched");
                 }else{
                     repo.createCategory(category.getCategory(), category.getAcronym());
-                    return new ApiResponse("category created");//TODO this should be 201
+                    return new ApiResponse("category created");
                 }
             }
         }
