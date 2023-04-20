@@ -1,5 +1,7 @@
 package com.product.api.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.product.api.dto.ApiResponse;
+import com.product.api.dto.DtoProductList;
+import com.product.api.entity.Category;
 import com.product.api.entity.Product;
 import com.product.api.service.SvcProduct;
 import com.product.exception.ApiException;
@@ -31,6 +35,11 @@ public class CtrlProduct {
 	@GetMapping("/{gtin}")
 	public ResponseEntity<Product> getProduct(@PathVariable("gtin") String gtin){
 		return new ResponseEntity<>(svc.getProduct(gtin), HttpStatus.OK);
+	}
+
+	@GetMapping("/category/{category_id}")
+	public ResponseEntity<List<DtoProductList>> getProducts(@PathVariable("category_id") Integer category_id){
+		return new ResponseEntity<>(svc.getProducts(category_id), HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -57,4 +66,11 @@ public class CtrlProduct {
 	public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("id") Integer id){
 		return new ResponseEntity<>(svc.deleteProduct(id), HttpStatus.OK);
 	}
+
+	@PutMapping("/{gtin}/category")
+	public ResponseEntity<ApiResponse> updateProductCategory(@PathVariable("gtin") String gtin, @RequestBody Category in){
+		return new ResponseEntity<>(svc.updateProductCategory(gtin, in),HttpStatus.OK);
+	}
+
+	
 }

@@ -1,6 +1,7 @@
 package com.product.api.service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.product.api.dto.ApiResponse;
+import com.product.api.dto.DtoProductList;
 import com.product.api.entity.Category;
 import com.product.api.entity.Product;
 import com.product.api.repository.RepoCategory;
 import com.product.api.repository.RepoProduct;
+import com.product.api.repository.RepoProductList;
 import com.product.exception.ApiException;
 
 @Service
@@ -23,6 +26,9 @@ public class SvcProductImp implements SvcProduct {
 	
 	@Autowired
 	RepoCategory repoCategory;
+
+	@Autowired
+	RepoProductList repoProductList;
 
 	@Override
 	public Product getProduct(String gtin) {
@@ -100,5 +106,23 @@ public class SvcProductImp implements SvcProduct {
 		
 		repo.updateProductStock(gtin, product.getStock() - stock);
 		return new ApiResponse("product stock updated");
+	}
+
+	@Override
+	public List<DtoProductList> getProducts(Integer Category_id) {
+		return repoProductList.getProducts(Category_id);
+	}
+
+	@Override
+	public ApiResponse updateProductCategory(String gtin, Category category) {
+		try{
+			if(repo.updateProductCategory(gtin, category.getCategory_id()) > 0){
+				return new ApiResponse("product category updated");
+			} else{
+				throw new ApiException(HttpStatus.NOT_FOUND, "product does not exist");
+			}
+		}catch (DataIntegrityViolationException e){
+			throw new ApiException(HttpStatus.NOT_FOUND, "category not found");
+		}
 	}
 }
