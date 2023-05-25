@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.product.api.entity.Product;
 
-@Repository
 public interface RepoProduct extends JpaRepository<Product, Integer>{
 
 	// 3. Implementar la firma de un método que permita consultar un producto por su código GTIN y con estatus 1
